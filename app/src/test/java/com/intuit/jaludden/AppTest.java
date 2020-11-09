@@ -3,12 +3,46 @@
  */
 package com.intuit.jaludden;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Assertions.*;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AppTest {
-    @Test void appHasAGreeting() {
-        App classUnderTest = new App();
-        assertNotNull(classUnderTest.getGreeting(), "app should have a greeting");
+
+    private App app;
+
+    @BeforeEach
+    public void startServer() {
+        app = new App();
+        new Thread(() -> {
+            try {
+                app.serve();
+            } catch (Exception e){}
+        }).start();
+    }
+
+    @AfterEach
+    public void stopServer() throws Exception {
+        app.stop();
+    }
+
+    @Test void appServerStartsAndAcceptRequests() throws Exception {
+        var client = HttpClient.newHttpClient();
+
+        var request = HttpRequest.newBuilder(
+                URI.create("http://localhost:8080/"))
+                .header("accept", "application/json")
+                .build();
+
+        var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(response.statusCode(), 200);
     }
 }

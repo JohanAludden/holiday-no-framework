@@ -11,6 +11,12 @@ plugins {
     application
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
 repositories {
     // Use JCenter for resolving dependencies.
     jcenter()
@@ -24,7 +30,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 
     // This dependency is used by the application.
-    implementation("com.google.guava:guava:29.0-jre")
+    implementation("org.eclipse.jetty:jetty-servlet:9.4.3.v20170317")
 }
 
 application {
