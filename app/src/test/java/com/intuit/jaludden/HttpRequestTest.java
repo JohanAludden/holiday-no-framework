@@ -10,6 +10,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpRequestTest {
 
@@ -37,8 +38,26 @@ public class HttpRequestTest {
     }
 
     @Test
+    public void listEventsHaveJsonFormat() throws Exception {
+        HttpResponse<String> response = sendRequestTo("/events/Johan");
+        assertEquals(response.headers().firstValue("content-type").get(), "application/json");
+    }
+
+    @Test
+    public void listEventsResponseBodyContainsEmployeeName() throws Exception {
+        HttpResponse<String> response = sendRequestTo("/events/Johan");
+        assertTrue(response.body().contains("Johan"));
+    }
+
+    @Test
     public void haveListEventForEmployeeEndpoint() throws Exception {
-        HttpResponse<String> response = sendRequestTo("/Johan/events");
+        HttpResponse<String> response = sendRequestTo("/events/Johan");
+        assertEquals(response.statusCode(), 200);
+    }
+
+    @Test
+    public void haveListEventHaveEmployeeNameInPath() throws Exception {
+        HttpResponse<String> response = sendRequestTo("/events/Varsha");
         assertEquals(response.statusCode(), 200);
     }
 

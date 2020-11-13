@@ -1,26 +1,36 @@
 package com.intuit.jaludden;
 
-import java.time.LocalDate;
-import java.util.Objects;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 public class Events {
 
-    private final LocalDate date;
+    private List<Event> events = new LinkedList<>();
+    private String employee;
 
-    public Events(LocalDate date) {
-        this.date = date;
+    public Events(String employee) {
+        this.employee = employee;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Events events = (Events) o;
-        return Objects.equals(date, events.date);
+    public String getEmployee() {
+        return employee;
+    }
+    public void addEvent(Event event) {
+        events.add(event);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(date);
+    public List<Event> getAllEvents() {
+        return Collections.unmodifiableList(events);
+    }
+
+    public String toJson() {
+        return String.format("{\"employee\": \"%s\", \"events\": [%s]}",
+                employee,
+                events.stream()
+                        .map(Event::toJson)
+                        .collect(Collectors.joining(",")));
     }
 }

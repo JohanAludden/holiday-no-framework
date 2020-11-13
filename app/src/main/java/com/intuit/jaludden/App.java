@@ -8,6 +8,7 @@ import org.eclipse.jetty.servlet.ServletHandler;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class App {
     private Server server;
@@ -35,16 +36,18 @@ public class App {
     }
 
     public static class MyServlet extends HttpServlet {
-        protected void service(HttpServletRequest req, HttpServletResponse resp) {
+        protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
             System.out.printf("Method: %s path: %s Query: %s\n", req.getMethod(), req.getPathInfo(), req.getQueryString());
-            switch (req.getPathInfo()) {
-                case "/": return;
-                case "/Johan/events":
-                    new EventController().getEventsFor("Johan");
-                    break;
-                default:
-                    resp.setStatus(404);
+            if (req.getPathInfo().equals("/")) {
+                return;
             }
+            if (req.getPathInfo().startsWith("/events/")) {
+                var result = new EventController().getEventsFor("Johan");
+                resp.setContentType("application/json");
+                resp.getWriter().print(result.toJson());
+                return;
+            }
+            resp.setStatus(404);
         }
     }
 }

@@ -13,30 +13,32 @@ public class EventControllerTest {
 
     @Test
     public void testNoEvents() {
-        List<Events> events = controller.getEventsFor("Johan");
-        assertEquals(events.size(), 0);
+        List<Event> events = controller.getEventsFor("Johan").getAllEvents();
+        assertEquals(0, events.size());
     }
 
     @Test
     public void testAddedEventIsReturned() {
         controller.createEventFor("Johan", LocalDate.of(2020, 12, 10));
-        List<Events> events = controller.getEventsFor("Johan");
-        assertEquals(events.size(), 1);
+        List<Event> events = controller.getEventsFor("Johan").getAllEvents();
+        assertEquals(1, events.size());
     }
 
     @Test
     public void testAllAddedEventsAreReturned() {
         controller.createEventFor("Johan", LocalDate.of(2020, 12, 10));
         controller.createEventFor("Johan", LocalDate.of(2020, 12, 11));
-        List<Events> events = controller.getEventsFor("Johan");
-        assertEquals(events.size(), 2);
+        List<Event> events = controller.getEventsFor("Johan").getAllEvents();
+        assertEquals(2, events.size());
     }
+
     @Test
     public void testOtherEmployeeEventsAreNotReturned() {
         controller.createEventFor("Johan", LocalDate.of(2020, 12, 10));
         controller.createEventFor("Varsha", LocalDate.of(2020, 12, 11));
-        List<Events> events = controller.getEventsFor("Johan");
-        assertEquals(events.size(), 1);
-        assertEquals(events.get(0), new Events(LocalDate.of(2020, 12, 10)));
+        Events events = controller.getEventsFor("Johan");
+        assertEquals(events.getAllEvents().size(), 1);
+        assertEquals(events.getAllEvents().get(0), new Event(LocalDate.of(2020, 12, 10)));
+        assertEquals("Johan", events.getEmployee());
     }
 }
