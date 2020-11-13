@@ -37,6 +37,14 @@ public class App {
     public static class MyServlet extends HttpServlet {
         protected void service(HttpServletRequest req, HttpServletResponse resp) {
             System.out.printf("Method: %s path: %s Query: %s\n", req.getMethod(), req.getPathInfo(), req.getQueryString());
+            switch (req.getPathInfo()) {
+                case "/": return;
+                case "/Johan/events":
+                    new EventController().getEventsFor("Johan");
+                    break;
+                default:
+                    resp.setStatus(404);
+            }
         }
     }
 }
