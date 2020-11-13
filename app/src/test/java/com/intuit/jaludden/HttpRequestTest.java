@@ -33,46 +33,69 @@ public class HttpRequestTest {
 
     @Test
     public void respondsOnRoot() throws Exception{
-        HttpResponse<String> response = sendRequestTo("/");
-        assertEquals(response.statusCode(), 200);
+        HttpResponse<String> response = getRequestFrom("/");
+        assertEquals(200, response.statusCode());
     }
 
     @Test
     public void listEventsHaveJsonFormat() throws Exception {
-        HttpResponse<String> response = sendRequestTo("/events/Johan");
-        assertEquals(response.headers().firstValue("content-type").get(), "application/json");
+        HttpResponse<String> response = getRequestFrom("/events/Johan");
+        assertEquals("application/json", response.headers().firstValue("content-type").get());
     }
 
     @Test
     public void listEventsResponseBodyContainsEmployeeName() throws Exception {
-        HttpResponse<String> response = sendRequestTo("/events/Johan");
+        HttpResponse<String> response = getRequestFrom("/events/Johan");
         assertTrue(response.body().contains("Johan"));
     }
 
     @Test
     public void haveListEventForEmployeeEndpoint() throws Exception {
-        HttpResponse<String> response = sendRequestTo("/events/Johan");
-        assertEquals(response.statusCode(), 200);
+        HttpResponse<String> response = getRequestFrom("/events/Johan");
+        assertEquals(200, response.statusCode());
+    }
+
+    @Test
+    public void eventsSupportsPostAndGet() throws Exception {
+        HttpResponse<String> postResponse = postRequestTo("/events/Johan", "{\"date\": \"2020-12-10\"}");
+        assertEquals(201, postResponse.statusCode());
+        HttpResponse<String> response = getRequestFrom("/events/Johan");
+        assertEquals(200, response.statusCode());
+        assertTrue(response.body().contains("Johan"), response.body());
+        assertTrue(response.body().contains("2020-12-10"), response.body());
     }
 
     @Test
     public void haveListEventHaveEmployeeNameInPath() throws Exception {
-        HttpResponse<String> response = sendRequestTo("/events/Varsha");
-        assertEquals(response.statusCode(), 200);
+        HttpResponse<String> response = getRequestFrom("/events/Varsha");
+        assertEquals(200, response.statusCode());
+        assertTrue(response.body().contains("Varsha"));
     }
 
     @Test
     public void respondsWithNotFoundForNotManagedPath() throws Exception {
-        HttpResponse<String> response = sendRequestTo("/path/that/does/not/exist");
-        assertEquals(response.statusCode(), 404);
+        HttpResponse<String> response = getRequestFrom("/path/that/does/not/exist");
+        assertEquals(404, response.statusCode());
     }
 
-    private HttpResponse<String> sendRequestTo(String path) throws java.io.IOException, InterruptedException {
+    private HttpResponse<String> getRequestFrom(String path) throws java.io.IOException, InterruptedException {
         var client = HttpClient.newHttpClient();
 
         var request = HttpRequest.newBuilder(
                 URI.create("http://localhost:8080" + path))
                 .header("accept", "application/json")
+                .build();
+
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpResponse<String> postRequestTo(String path, String body) throws java.io.IOException, InterruptedException {
+        var client = HttpClient.newHttpClient();
+
+        var request = HttpRequest.newBuilder(
+                URI.create("http://localhost:8080" + path))
+                .header("accept", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(body))
                 .build();
 
         return client.send(request, HttpResponse.BodyHandlers.ofString());

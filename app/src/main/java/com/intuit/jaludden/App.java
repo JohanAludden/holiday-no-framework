@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 public class App {
     private Server server;
@@ -36,16 +38,25 @@ public class App {
     }
 
     public static class MyServlet extends HttpServlet {
+        EventController eventsController = new EventController();
         protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
             System.out.printf("Method: %s path: %s Query: %s\n", req.getMethod(), req.getPathInfo(), req.getQueryString());
             if (req.getPathInfo().equals("/")) {
                 return;
             }
             if (req.getPathInfo().startsWith("/events/")) {
-                var result = new EventController().getEventsFor("Johan");
-                resp.setContentType("application/json");
-                resp.getWriter().print(result.toJson());
-                return;
+                String employee = req.getPathInfo().substring(8);
+                if (req.getMethod().equals("GET")) {
+                    var result = eventsController.getEventsFor(employee);
+                    resp.setContentType("application/json");
+                    resp.getWriter().print(result.toJson());
+                    return;
+                } else if (req.getMethod().equals("POST")) {
+                    LocalDate date = LocalDate.parse(req.getReader().lines().collect(Collectors.joining()).substring(10, 20));
+                    eventsController.createEventFor(employee, date);
+                    resp.setStatus(201);
+                    return;
+                }
             }
             resp.setStatus(404);
         }
