@@ -2,6 +2,11 @@ package com.intuit.jaludden;
 
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -60,6 +65,26 @@ public class HolidayServerTest {
         server.startServer(8080);
         server2.startServer(8080);
     }
+
+    @Test
+    public void realServerRespondsToRootPath() throws Exception {
+        startAndStopServer(server -> {
+            HttpResponse<String> response = getRequestFrom("/");
+            assertEquals(200, response.statusCode());
+        });
+    }
+
+    private HttpResponse<String> getRequestFrom(String path) throws java.io.IOException, InterruptedException {
+        var client = HttpClient.newHttpClient();
+
+        var request = HttpRequest.newBuilder(
+                URI.create("http://localhost:8080" + path))
+                .header("accept", "application/json")
+                .build();
+
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
 
     private void startAndStopServer(ConsumerWithException<HolidayServer> whileStarted) throws Exception {
         startAndStopServer(new HolidayServer(), whileStarted);
