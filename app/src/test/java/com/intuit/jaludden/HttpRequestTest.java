@@ -17,13 +17,9 @@ public class HttpRequestTest {
     private App app;
 
     @BeforeEach
-    public void startServer() {
-        app = new App();
-        new Thread(() -> {
-            try {
-                app.serve();
-            } catch (Exception e){}
-        }).start();
+    public void startServer() throws Exception {
+        app = new App(new HolidayServer());
+        app.start();
     }
 
     @AfterEach
