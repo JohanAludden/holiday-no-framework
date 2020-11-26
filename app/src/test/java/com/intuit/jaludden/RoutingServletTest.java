@@ -21,7 +21,7 @@ public class RoutingServletTest {
     public void testRouting(String method, String path, String[][] inputBody, int statusCode, String outputBody) {
         var servlet = new RoutingServlet();
         Map<String, String[]> parameters = Arrays.stream(inputBody).collect(Collectors.toMap(i -> i[0], i -> new String[]{i[1]}));
-        var result = servlet.route(method, path, () -> "", parameters);
+        var result = servlet.route(method, path, parameters);
         assertEquals(statusCode, result.status);
         assertEquals(outputBody, result.body);
     }
@@ -29,12 +29,18 @@ public class RoutingServletTest {
     static Stream<Arguments> routingData() {
         return Stream.of(
                 GET("/").expectResponse(200),
+
                 GET("/events/johan")
                         .expectResponse(200, "{\"employee\": \"johan\", \"events\": []}"),
                 POST("/events/johan", new String[][]{{"date", "2020-12-10"}, {"type", "HOLIDAY"}})
                         .expectResponse(201, "{\"date\": \"2020-12-10\", \"type\": \"holiday\"}"),
                 POST("/events/johan", new String[][]{{"date", "2020-12-10"}, {"type", "SICK_DAY"}})
                         .expectResponse(201, "{\"date\": \"2020-12-10\", \"type\": \"sick_day\"}"),
+                GET("/events/johan/does/not/exist")
+                        .expectResponse(404),
+
+                GET("/events/varsha/employees").expectResponse(200),
+
                 GET("/a/path/that/does/not/exist")
                         .expectResponse(404)
         );

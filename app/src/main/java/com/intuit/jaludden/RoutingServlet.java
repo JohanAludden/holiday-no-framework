@@ -27,11 +27,9 @@ public class RoutingServlet extends HttpServlet {
     }
 
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        var reader = req.getReader();
         var result = route(
                 req.getMethod(),
                 req.getPathInfo(),
-                () -> reader.lines().collect(Collectors.joining()),
                 req.getParameterMap()
         );
         resp.setStatus(result.status);
@@ -41,22 +39,32 @@ public class RoutingServlet extends HttpServlet {
         }
     }
 
-    public RoutingResult route(String method, String path, Supplier<String> body, Map<String, String[]> parameters) {
+    public RoutingResult route(String method, String path, Map<String, String[]> parameters) {
         System.out.printf("Method: %s path: %s\n", method, path);
-        if (path.equals("/")) {
+        String[] pathElements = path.split("/");
+        if (pathElements.length == 0) {
             return new RoutingResult(200);
         }
-        if (path.startsWith("/events/")) {
-            String employee = path.substring(8);
-            switch (method) {
-                case "GET":
-                    var result = eventsController.getEventsFor(employee);
-                    return new RoutingResult(200, result.toJson());
-                case "POST":
-                    LocalDate date = LocalDate.parse(parameters.get("date")[0]);
-                    Event.Type type = Event.Type.valueOf(parameters.get("type")[0]);
-                    var event = eventsController.createEventFor(employee, date, type);
-                    return new RoutingResult(201, event.toJson());
+        if (pathElements[1].equals("events")) {
+            String employee = pathElements[2];
+            if (pathElements.length == 3) {
+                switch (method) {
+                    case "GET":
+                        var result = eventsController.getEventsFor(employee);
+                        return new RoutingResult(200, result.toJson());
+                    case "POST":
+                        LocalDate date = LocalDate.parse(parameters.get("date")[0]);
+                        Event.Type type = Event.Type.valueOf(parameters.get("type")[0]);
+                        var event = eventsController.createEventFor(employee, date, type);
+                        return new RoutingResult(201, event.toJson());
+                }
+            } else if (pathElements.length == 4 && pathElements[3].equals("employees")) {
+                switch (method) {
+                    case "GET":
+                        return new RoutingResult(200);
+                    case "POST":
+                        return new RoutingResult(404);
+                }
             }
         }
         return new RoutingResult(404);
