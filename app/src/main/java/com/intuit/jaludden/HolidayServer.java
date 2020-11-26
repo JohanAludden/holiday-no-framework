@@ -1,8 +1,6 @@
 package com.intuit.jaludden;
 
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletHandler;
 
 import java.net.BindException;
@@ -31,11 +29,10 @@ public class HolidayServer {
         }
         try {
             jettyServer = serverCreator.apply(port);
-            jettyServer.createConnector(port);
 
             var handler = new ServletHandler();
-            jettyServer.setHandler(handler);
             handler.addServletWithMapping(RoutingServlet.class, "/*");
+            jettyServer.setHandler(handler);
 
             jettyServer.start();
         } catch (BindException e) {
@@ -60,15 +57,7 @@ public class HolidayServer {
     private interface ServerWrapper {
         void start() throws Exception;
         void stop() throws Exception;
-        void createConnector(int port);
         void setHandler(ServletHandler handler);
-    }
-
-    private static class NullServer implements ServerWrapper {
-        @Override public void start() {}
-        @Override public void stop() {}
-        @Override public void createConnector(int port) {}
-        @Override public void setHandler(ServletHandler handler) {}
     }
 
     private static class JettyWrapper implements ServerWrapper {
@@ -92,12 +81,11 @@ public class HolidayServer {
         public void stop() throws Exception {
             s.stop();
         }
+    }
 
-        @Override
-        public void createConnector(int port) {
-            var c = new ServerConnector(s);
-            c.setPort(port);
-            s.setConnectors(new Connector[]{c});
-        }
+    private static class NullServer implements ServerWrapper {
+        @Override public void start() {}
+        @Override public void stop() {}
+        @Override public void setHandler(ServletHandler handler) {}
     }
 }

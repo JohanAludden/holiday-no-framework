@@ -17,17 +17,18 @@ public class EventsTest {
     @Test
     public void testToJsonOneEvent() {
         Events events = new Events("Johan");
-        events.addEvent(new Event(LocalDate.of(2020, 12, 10)));
+        events.addEvent(new Event(LocalDate.of(2020, 12, 10), Event.Type.HOLIDAY));
+
         String result = events.toJson();
-        assertEquals("{\"employee\": \"Johan\", \"events\": [{\"date\": \"2020-12-10\"}]}", result);
+        assertEquals("{\"employee\": \"Johan\", \"events\": [{\"date\": \"2020-12-10\", \"type\": \"holiday\"}]}", result);
     }
 
     @Test
     public void testToJsonTwoEvents() {
         Events events = new Events("Johan");
-        events.addEvent(new Event(LocalDate.of(2020, 12, 10)));
-        events.addEvent(new Event(LocalDate.of(2020, 12, 11)));
+        events.addEvent(new Event(LocalDate.of(2020, 12, 10), Event.Type.HOLIDAY));
+        events.addEvent(new Event(LocalDate.of(2020, 12, 11), Event.Type.HOLIDAY));
         String result = events.toJson();
-        assertEquals("{\"employee\": \"Johan\", \"events\": [{\"date\": \"2020-12-10\"},{\"date\": \"2020-12-11\"}]}", result);
+        assertEquals("{\"employee\": \"Johan\", \"events\": [{\"date\": \"2020-12-10\", \"type\": \"holiday\"},{\"date\": \"2020-12-11\", \"type\": \"holiday\"}]}", result);
     }
 }

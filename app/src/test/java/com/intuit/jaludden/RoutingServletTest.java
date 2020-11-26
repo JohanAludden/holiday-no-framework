@@ -26,7 +26,8 @@ public class RoutingServletTest {
         return Stream.of(
                 request("GET", "/", "", 200, null),
                 request("GET", "/events/johan", "", 200, "{\"employee\": \"johan\", \"events\": []}"),
-                request("POST", "/events/johan", "{\"date\": \"2020-12-10\"}", 201, null),
+                request("POST", "/events/johan", "{\"date\": \"2020-12-10\", \"type\": \"holiday\"}", 201, "{\"date\": \"2020-12-10\", \"type\": \"holiday\"}"),
+//                request("POST", "/events/johan", "{\"date\": \"2020-12-10\", \"type\": \"sick_day\"}", 201, "{\"date\": \"2020-12-10\", \"type\": \"sick_day\"}"),
                 request("GET", "/a/path/that/does/not/exist", "", 404, null)
         );
     }

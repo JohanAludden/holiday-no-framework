@@ -48,8 +48,8 @@ public class RoutingServlet extends HttpServlet {
                     return new RoutingResult(200, result.toJson());
                 case "POST":
                     LocalDate date = LocalDate.parse(body.get().substring(10, 20));
-                    eventsController.createEventFor(employee, date);
-                    return new RoutingResult(201);
+                    var event = eventsController.createEventFor(employee, date, Event.Type.HOLIDAY);
+                    return new RoutingResult(201, event.toJson());
             }
         }
         return new RoutingResult(404);

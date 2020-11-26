@@ -14,6 +14,11 @@ public class Events {
         this.employee = employee;
     }
 
+    private Events(String employee, List<Event> events) {
+        this.employee = employee;
+        this.events = events;
+    }
+
     public String getEmployee() {
         return employee;
     }
@@ -31,5 +36,10 @@ public class Events {
                 events.stream()
                         .map(Event::toJson)
                         .collect(Collectors.joining(",")));
+    }
+
+    public Events filterBy(Event.Type type) {
+        List<Event> filteredEvents = events.stream().filter(e -> e.isType(type)).collect(Collectors.toList());
+        return new Events(employee, filteredEvents);
     }
 }

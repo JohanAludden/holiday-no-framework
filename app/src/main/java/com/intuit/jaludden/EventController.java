@@ -12,7 +12,14 @@ public class EventController {
         return events.getOrDefault(employee, new Events(employee));
     }
 
-    public void createEventFor(String employee, LocalDate date) {
-        events.computeIfAbsent(employee, (e) -> new Events(employee)).addEvent(new Event(date));
+    public Events getEventsFor(String employee, Event.Type type) {
+        return events.getOrDefault(employee, new Events(employee)).filterBy(type);
     }
+
+    public Event createEventFor(String employee, LocalDate date, Event.Type type) {
+        Event result = new Event(date, type);
+        events.computeIfAbsent(employee, (e) -> new Events(employee)).addEvent(result);
+        return result;
+    }
+
 }
