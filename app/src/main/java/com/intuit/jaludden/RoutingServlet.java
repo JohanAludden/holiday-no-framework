@@ -6,8 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class RoutingServlet extends HttpServlet {
     EventController eventsController = new EventController();

@@ -1,10 +1,5 @@
 package com.intuit.jaludden;
 
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.servlet.ServletHandler;
-
 public class App {
     private HolidayServer server;
 

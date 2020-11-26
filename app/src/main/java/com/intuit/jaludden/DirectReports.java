@@ -1,5 +1,6 @@
 package com.intuit.jaludden;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,11 @@ public class DirectReports {
     public DirectReports(String manager, List<DirectReport> directReports) {
         this.manager = manager;
         this.directReports = directReports;
+    }
+
+    public DirectReports(String manager) {
+        this.manager = manager;
+        this.directReports = new LinkedList<>();
     }
 
     public String toJson() {
@@ -27,5 +33,9 @@ public class DirectReports {
 
     public DirectReport get(int index) {
         return directReports.get(index);
+    }
+
+    public void add(DirectReport directReport) {
+        directReports.add(directReport);
     }
 }
