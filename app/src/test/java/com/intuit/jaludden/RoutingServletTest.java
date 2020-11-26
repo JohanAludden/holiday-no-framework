@@ -39,7 +39,7 @@ public class RoutingServletTest {
                 GET("/events/johan/does/not/exist")
                         .expectResponse(404),
 
-                GET("/events/varsha/employees").expectResponse(200),
+                GET("/events/varsha/direct_reports").expectResponse(200),
 
                 GET("/a/path/that/does/not/exist")
                         .expectResponse(404)

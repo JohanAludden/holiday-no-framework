@@ -1,4 +1,4 @@
 package com.intuit.jaludden;
 
-public class Employee {
+public class DirectReport {
 }

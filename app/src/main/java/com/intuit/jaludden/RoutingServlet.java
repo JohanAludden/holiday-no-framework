@@ -58,7 +58,7 @@ public class RoutingServlet extends HttpServlet {
                         var event = eventsController.createEventFor(employee, date, type);
                         return new RoutingResult(201, event.toJson());
                 }
-            } else if (pathElements.length == 4 && pathElements[3].equals("employees")) {
+            } else if (pathElements.length == 4 && pathElements[3].equals("direct_reports")) {
                 switch (method) {
                     case "GET":
                         return new RoutingResult(200);
