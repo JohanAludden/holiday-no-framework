@@ -10,8 +10,8 @@ public class DirectReportsController {
 
     private Map<String, List<DirectReport>> orgStructure = new HashMap<>();
 
-    public List<DirectReport> getDirectReportsFor(String manager) {
-        return orgStructure.getOrDefault(manager, Collections.emptyList());
+    public DirectReports getDirectReportsFor(String manager) {
+        return new DirectReports(manager, orgStructure.getOrDefault(manager, Collections.emptyList()));
     }
 
     public void addDirectReportFor(String manager, String employee) {

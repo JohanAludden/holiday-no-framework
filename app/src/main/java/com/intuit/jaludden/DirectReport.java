@@ -11,4 +11,8 @@ public class DirectReport {
     public String getName() {
         return name;
     }
+
+    public String toJson() {
+        return String.format("{\"name\": \"%s\"}", name);
+    }
 }

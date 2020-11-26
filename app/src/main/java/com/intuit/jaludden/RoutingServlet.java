@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 public class RoutingServlet extends HttpServlet {
     EventController eventsController = new EventController();
+    DirectReportsController directReportsController = new DirectReportsController();
 
     public static class RoutingResult {
         public int status;
@@ -61,7 +62,8 @@ public class RoutingServlet extends HttpServlet {
             } else if (pathElements.length == 4 && pathElements[3].equals("direct_reports")) {
                 switch (method) {
                     case "GET":
-                        return new RoutingResult(200);
+                        var result = directReportsController.getDirectReportsFor(employee);
+                        return new RoutingResult(200, result.toJson());
                     case "POST":
                         return new RoutingResult(404);
                 }

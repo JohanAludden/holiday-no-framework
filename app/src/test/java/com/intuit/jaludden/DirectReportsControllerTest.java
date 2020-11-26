@@ -12,14 +12,14 @@ public class DirectReportsControllerTest {
 
     @Test
     public void testNoDirectReports() {
-        List<DirectReport> directReports = controller.getDirectReportsFor("Varsha");
+        var directReports = controller.getDirectReportsFor("Varsha");
         assertEquals(0, directReports.size());
     }
 
     @Test
     public void testOneDirectReport() {
         controller.addDirectReportFor("Varsha", "Johan");
-        List<DirectReport> directReports = controller.getDirectReportsFor("Varsha");
+        var directReports = controller.getDirectReportsFor("Varsha");
         assertEquals(1, directReports.size());
         assertEquals("Johan", directReports.get(0).getName());
     }
@@ -28,7 +28,7 @@ public class DirectReportsControllerTest {
     public void testDoesNotIncludeOthersReports() {
         controller.addDirectReportFor("Varsha", "Johan");
         controller.addDirectReportFor("Israel", "Alex");
-        List<DirectReport> directReports = controller.getDirectReportsFor("Varsha");
+        var directReports = controller.getDirectReportsFor("Varsha");
         assertEquals(1, directReports.size());
         assertEquals("Johan", directReports.get(0).getName());
     }
@@ -37,7 +37,7 @@ public class DirectReportsControllerTest {
     public void testDoesNotIncludeSubReports() {
         controller.addDirectReportFor("Varsha", "Johan");
         controller.addDirectReportFor("Johan", "Alex");
-        List<DirectReport> directReports = controller.getDirectReportsFor("Varsha");
+        var directReports = controller.getDirectReportsFor("Varsha");
         assertEquals(1, directReports.size());
         assertEquals("Johan", directReports.get(0).getName());
     }
