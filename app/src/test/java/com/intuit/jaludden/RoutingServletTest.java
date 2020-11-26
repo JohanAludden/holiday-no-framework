@@ -28,15 +28,48 @@ public class RoutingServletTest {
 
     static Stream<Arguments> routingData() {
         return Stream.of(
-                request("GET", "/", new String[][]{}, 200, null),
-                request("GET", "/events/johan", new String[][]{}, 200, "{\"employee\": \"johan\", \"events\": []}"),
-                request("POST", "/events/johan", new String[][]{{"date", "2020-12-10"}, {"type", "HOLIDAY"}}, 201, "{\"date\": \"2020-12-10\", \"type\": \"holiday\"}"),
-                request("POST", "/events/johan", new String[][]{{"date", "2020-12-10"}, {"type", "SICK_DAY"}}, 201, "{\"date\": \"2020-12-10\", \"type\": \"sick_day\"}"),
-                request("GET", "/a/path/that/does/not/exist", new String[][]{}, 404, null)
+                GET("/").expectResponse(200),
+                GET("/events/johan")
+                        .expectResponse(200, "{\"employee\": \"johan\", \"events\": []}"),
+                POST("/events/johan", new String[][]{{"date", "2020-12-10"}, {"type", "HOLIDAY"}})
+                        .expectResponse(201, "{\"date\": \"2020-12-10\", \"type\": \"holiday\"}"),
+                POST("/events/johan", new String[][]{{"date", "2020-12-10"}, {"type", "SICK_DAY"}})
+                        .expectResponse(201, "{\"date\": \"2020-12-10\", \"type\": \"sick_day\"}"),
+                GET("/a/path/that/does/not/exist")
+                        .expectResponse(404)
         );
     }
 
-    private static Arguments request(String method, String path, String[][] requestBody, int statusCode, String responseBody) {
-        return arguments(method, path, requestBody, statusCode, responseBody);
+    private static RequestArguments GET(String path) {
+        return new RequestArguments("GET", path);
+    }
+
+    private static RequestArguments POST(String path, String[][] requestBody) {
+        return new RequestArguments("POST", path, requestBody);
+    }
+
+    private static class RequestArguments {
+
+        private final String method;
+        private final String path;
+        private final String[][] requestBody;
+
+        public RequestArguments(String method, String path) {
+            this(method, path, new String[][]{});
+        }
+
+        public RequestArguments(String method, String path, String[][] requestBody) {
+            this.method = method;
+            this.path = path;
+            this.requestBody = requestBody;
+        }
+
+        public Arguments expectResponse(int statusCode) {
+            return expectResponse(statusCode, null);
+        }
+
+        public Arguments expectResponse(int statusCode, String responseBody) {
+            return arguments(method, path, requestBody, statusCode, responseBody);
+        }
     }
 }
