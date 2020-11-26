@@ -12,7 +12,7 @@ public class EventControllerTest {
     private static final LocalDate DECEMBER_TENTH = LocalDate.of(2020, 12, 10);
     private static final LocalDate DECEMBER_ELEVENTH = LocalDate.of(2020, 12, 11);
 
-    private EventController controller = new EventController();
+    private EventController controller = new EventController(new EventRepository());
 
     @Test
     public void testNoEvents() {

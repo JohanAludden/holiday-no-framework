@@ -1,25 +1,26 @@
 package com.intuit.jaludden;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 public class EventController {
 
-    private Map<String, Events> events = new HashMap<>();
+    private EventRepository repository;
+
+    public EventController(EventRepository repository) {
+        this.repository = repository;
+    }
 
     public Events getEventsFor(String employee) {
-        return events.getOrDefault(employee, new Events(employee));
+        return repository.getAllFor(employee);
     }
 
     public Events getEventsFor(String employee, Event.Type type) {
-        return events.getOrDefault(employee, new Events(employee)).filterBy(type);
+        return repository.getAllForWithType(employee, type, this);
     }
 
     public Event createEventFor(String employee, LocalDate date, Event.Type type) {
-        Event result = new Event(date, type);
-        events.computeIfAbsent(employee, (e) -> new Events(employee)).addEvent(result);
+        var result = new Event(date, type);
+        repository.addEvent(employee, result);
         return result;
     }
-
 }

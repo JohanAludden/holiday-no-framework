@@ -12,7 +12,7 @@ public class DirectReportsController {
     }
 
     public DirectReport addDirectReportFor(String manager, String employee) {
-        DirectReport directReport = new DirectReport(employee, manager);
+        var directReport = new DirectReport(employee, manager);
         orgStructure.computeIfAbsent(manager, key -> new DirectReports(manager)).add(directReport);
         return directReport;
     }

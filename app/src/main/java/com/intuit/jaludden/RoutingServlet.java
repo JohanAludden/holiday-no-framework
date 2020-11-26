@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.Map;
 
 public class RoutingServlet extends HttpServlet {
-    EventController eventsController = new EventController();
+    EventController eventsController = new EventController(new EventRepository());
     DirectReportsController directReportsController = new DirectReportsController();
 
     public static class RoutingResult {
@@ -40,19 +40,19 @@ public class RoutingServlet extends HttpServlet {
 
     public RoutingResult route(String method, String path, Map<String, String[]> parameters) {
         System.out.printf("Method: %s path: %s\n", method, path);
-        String[] pathElements = path.split("/");
+        var pathElements = path.split("/");
         if (pathElements.length == 0) {
             return new RoutingResult(200);
         }
-        String employee = pathElements[1];
+        var employee = pathElements[1];
         if (pathElements[2].equals("events")) {
             switch (method) {
                 case "GET":
                     var result = eventsController.getEventsFor(employee);
                     return new RoutingResult(200, result.toJson());
                 case "POST":
-                    LocalDate date = LocalDate.parse(parameters.get("date")[0]);
-                    Event.Type type = Event.Type.valueOf(parameters.get("type")[0]);
+                    var date = LocalDate.parse(parameters.get("date")[0]);
+                    var type = Event.Type.valueOf(parameters.get("type")[0]);
                     var event = eventsController.createEventFor(employee, date, type);
                     return new RoutingResult(201, event.toJson());
             }
@@ -62,7 +62,7 @@ public class RoutingServlet extends HttpServlet {
                     var result = directReportsController.getDirectReportsFor(employee);
                     return new RoutingResult(200, result.toJson());
                 case "POST":
-                    String directReportName = parameters.get("employee_name")[0];
+                    var directReportName = parameters.get("employee_name")[0];
                     var directReport = directReportsController.addDirectReportFor(employee, directReportName);
                     return new RoutingResult(201, directReport.toJson());
             }

@@ -22,6 +22,7 @@ public class Events {
     public String getEmployee() {
         return employee;
     }
+
     public void addEvent(Event event) {
         events.add(event);
     }
@@ -39,7 +40,7 @@ public class Events {
     }
 
     public Events filterBy(Event.Type type) {
-        List<Event> filteredEvents = events.stream().filter(e -> e.isType(type)).collect(Collectors.toList());
+        var filteredEvents = events.stream().filter(e -> e.isType(type)).collect(Collectors.toList());
         return new Events(employee, filteredEvents);
     }
 }
