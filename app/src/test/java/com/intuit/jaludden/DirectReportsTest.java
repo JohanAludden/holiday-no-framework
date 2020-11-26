@@ -15,19 +15,19 @@ public class DirectReportsTest {
     @Test
     public void testToJsonOneDirectReport() {
         DirectReports directReports = new DirectReports("Johan");
-        directReports.add(new DirectReport("Alex"));
+        directReports.add(new DirectReport("Alex", "Johan"));
 
         String result = directReports.toJson();
-        assertEquals("{\"manager\": \"Johan\", \"direct_reports\": [{\"name\": \"Alex\"}]}", result);
+        assertEquals("{\"manager\": \"Johan\", \"direct_reports\": [{\"manager_name\": \"Johan\", \"employee_name\": \"Alex\"}]}", result);
     }
 
     @Test
     public void testToJsonTwoDirectReports() {
         DirectReports directReports = new DirectReports("Johan");
-        directReports.add(new DirectReport("Alex"));
-        directReports.add(new DirectReport("Varsha"));
+        directReports.add(new DirectReport("Alex", "Johan"));
+        directReports.add(new DirectReport("Varsha", "Johan"));
 
         String result = directReports.toJson();
-        assertEquals("{\"manager\": \"Johan\", \"direct_reports\": [{\"name\": \"Alex\"},{\"name\": \"Varsha\"}]}", result);
+        assertEquals("{\"manager\": \"Johan\", \"direct_reports\": [{\"manager_name\": \"Johan\", \"employee_name\": \"Alex\"},{\"manager_name\": \"Johan\", \"employee_name\": \"Varsha\"}]}", result);
     }
 }

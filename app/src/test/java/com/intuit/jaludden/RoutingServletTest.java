@@ -42,6 +42,9 @@ public class RoutingServletTest {
                 GET("/events/varsha/direct_reports")
                         .expectResponse(200, "{\"manager\": \"varsha\", \"direct_reports\": []}"),
 
+                POST("/events/varsha/direct_reports", new String[][]{{"employee_name", "Johan"}})
+                        .expectResponse(201, "{\"manager_name\": \"varsha\", \"employee_name\": \"Johan\"}"),
+
                 GET("/a/path/that/does/not/exist")
                         .expectResponse(404)
         );

@@ -11,7 +11,9 @@ public class DirectReportsController {
         return orgStructure.getOrDefault(manager, new DirectReports(manager));
     }
 
-    public void addDirectReportFor(String manager, String employee) {
-        orgStructure.computeIfAbsent(manager, key -> new DirectReports(manager)).add(new DirectReport(employee));
+    public DirectReport addDirectReportFor(String manager, String employee) {
+        DirectReport directReport = new DirectReport(employee, manager);
+        orgStructure.computeIfAbsent(manager, key -> new DirectReports(manager)).add(directReport);
+        return directReport;
     }
 }

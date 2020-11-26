@@ -63,7 +63,9 @@ public class RoutingServlet extends HttpServlet {
                         var result = directReportsController.getDirectReportsFor(employee);
                         return new RoutingResult(200, result.toJson());
                     case "POST":
-                        return new RoutingResult(404);
+                        String directReportName = parameters.get("employee_name")[0];
+                        var direcrtReport = directReportsController.addDirectReportFor(employee, directReportName);
+                        return new RoutingResult(201, direcrtReport.toJson());
                 }
             }
         }

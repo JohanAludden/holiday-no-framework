@@ -2,10 +2,12 @@ package com.intuit.jaludden;
 
 public class DirectReport {
 
-    private final String name;
+    private String name;
+    private String managerName;
 
-    public DirectReport(String name) {
+    public DirectReport(String name, String managerName) {
         this.name = name;
+        this.managerName = managerName;
     }
 
     public String getName() {
@@ -13,6 +15,6 @@ public class DirectReport {
     }
 
     public String toJson() {
-        return String.format("{\"name\": \"%s\"}", name);
+        return String.format("{\"manager_name\": \"%s\", \"employee_name\": \"%s\"}", managerName, name);
     }
 }
