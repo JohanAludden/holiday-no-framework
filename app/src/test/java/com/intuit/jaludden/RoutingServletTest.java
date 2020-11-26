@@ -30,19 +30,19 @@ public class RoutingServletTest {
         return Stream.of(
                 GET("/").expectResponse(200),
 
-                GET("/events/johan")
+                GET("/johan/events")
                         .expectResponse(200, "{\"employee\": \"johan\", \"events\": []}"),
-                POST("/events/johan", new String[][]{{"date", "2020-12-10"}, {"type", "HOLIDAY"}})
+                POST("/johan/events", new String[][]{{"date", "2020-12-10"}, {"type", "HOLIDAY"}})
                         .expectResponse(201, "{\"date\": \"2020-12-10\", \"type\": \"holiday\"}"),
-                POST("/events/johan", new String[][]{{"date", "2020-12-10"}, {"type", "SICK_DAY"}})
+                POST("/johan/events", new String[][]{{"date", "2020-12-10"}, {"type", "SICK_DAY"}})
                         .expectResponse(201, "{\"date\": \"2020-12-10\", \"type\": \"sick_day\"}"),
-                GET("/events/johan/does/not/exist")
+                GET("/johan/does/not/exist")
                         .expectResponse(404),
 
-                GET("/events/varsha/direct_reports")
+                GET("/varsha/direct_reports")
                         .expectResponse(200, "{\"manager\": \"varsha\", \"direct_reports\": []}"),
 
-                POST("/events/varsha/direct_reports", new String[][]{{"employee_name", "Johan"}})
+                POST("/varsha/direct_reports", new String[][]{{"employee_name", "Johan"}})
                         .expectResponse(201, "{\"manager_name\": \"varsha\", \"employee_name\": \"Johan\"}"),
 
                 GET("/a/path/that/does/not/exist")

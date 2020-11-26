@@ -44,29 +44,27 @@ public class RoutingServlet extends HttpServlet {
         if (pathElements.length == 0) {
             return new RoutingResult(200);
         }
-        if (pathElements[1].equals("events")) {
-            String employee = pathElements[2];
-            if (pathElements.length == 3) {
-                switch (method) {
-                    case "GET":
-                        var result = eventsController.getEventsFor(employee);
-                        return new RoutingResult(200, result.toJson());
-                    case "POST":
-                        LocalDate date = LocalDate.parse(parameters.get("date")[0]);
-                        Event.Type type = Event.Type.valueOf(parameters.get("type")[0]);
-                        var event = eventsController.createEventFor(employee, date, type);
-                        return new RoutingResult(201, event.toJson());
-                }
-            } else if (pathElements.length == 4 && pathElements[3].equals("direct_reports")) {
-                switch (method) {
-                    case "GET":
-                        var result = directReportsController.getDirectReportsFor(employee);
-                        return new RoutingResult(200, result.toJson());
-                    case "POST":
-                        String directReportName = parameters.get("employee_name")[0];
-                        var direcrtReport = directReportsController.addDirectReportFor(employee, directReportName);
-                        return new RoutingResult(201, direcrtReport.toJson());
-                }
+        String employee = pathElements[1];
+        if (pathElements[2].equals("events")) {
+            switch (method) {
+                case "GET":
+                    var result = eventsController.getEventsFor(employee);
+                    return new RoutingResult(200, result.toJson());
+                case "POST":
+                    LocalDate date = LocalDate.parse(parameters.get("date")[0]);
+                    Event.Type type = Event.Type.valueOf(parameters.get("type")[0]);
+                    var event = eventsController.createEventFor(employee, date, type);
+                    return new RoutingResult(201, event.toJson());
+            }
+        } else if (pathElements[2].equals("direct_reports")) {
+            switch (method) {
+                case "GET":
+                    var result = directReportsController.getDirectReportsFor(employee);
+                    return new RoutingResult(200, result.toJson());
+                case "POST":
+                    String directReportName = parameters.get("employee_name")[0];
+                    var directReport = directReportsController.addDirectReportFor(employee, directReportName);
+                    return new RoutingResult(201, directReport.toJson());
             }
         }
         return new RoutingResult(404);
