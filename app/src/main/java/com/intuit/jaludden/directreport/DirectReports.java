@@ -1,5 +1,6 @@
 package com.intuit.jaludden.directreport;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,5 +38,13 @@ public class DirectReports {
 
     public void add(DirectReport directReport) {
         directReports.add(directReport);
+    }
+
+    public String manager() {
+        return manager;
+    }
+
+    public List<DirectReport> directReports() {
+        return Collections.unmodifiableList(directReports);
     }
 }

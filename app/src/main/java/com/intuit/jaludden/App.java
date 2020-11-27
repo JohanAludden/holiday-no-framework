@@ -1,5 +1,6 @@
 package com.intuit.jaludden;
 
+import com.intuit.jaludden.directreport.DatabaseDirectReportRepository;
 import com.intuit.jaludden.directreport.DirectReportsController;
 import com.intuit.jaludden.event.DatabaseEventRepository;
 import com.intuit.jaludden.event.EventController;
@@ -19,7 +20,8 @@ public class App {
         var database = new HolidayDatabase();
         var eventRepository = new DatabaseEventRepository(database);
         var eventsController = new EventController(eventRepository);
-        var directReportsController = new DirectReportsController();
+        var directReportRepository = new DatabaseDirectReportRepository(database);
+        var directReportsController = new DirectReportsController(directReportRepository);
         var routingServlet = new RoutingServlet(eventsController, directReportsController);
         var server = new HolidayServer(routingServlet);
 

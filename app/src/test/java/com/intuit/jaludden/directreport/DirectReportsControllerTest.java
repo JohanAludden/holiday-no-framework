@@ -2,11 +2,14 @@ package com.intuit.jaludden.directreport;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DirectReportsControllerTest {
 
-    private DirectReportsController controller = new DirectReportsController();
+    private DirectReportsController controller = new DirectReportsController(new InMemoryDirectReportRepository());
 
     @Test
     public void testNoDirectReports() {
@@ -38,5 +41,17 @@ public class DirectReportsControllerTest {
         var directReports = controller.getDirectReportsFor("Varsha");
         assertEquals(1, directReports.size());
         assertEquals("Johan", directReports.get(0).getName());
+    }
+
+    private static class InMemoryDirectReportRepository implements DirectReportRepository {
+        private Map<String, DirectReports> orgStructure = new HashMap<>();
+
+        public DirectReports getDirectReportsFor(String manager) {
+            return orgStructure.getOrDefault(manager, new DirectReports(manager));
+        }
+
+        public void addDirectReportFor(DirectReport directReport) {
+            orgStructure.computeIfAbsent(directReport.getManagerName(), key -> new DirectReports(directReport.getManagerName())).add(directReport);
+        }
     }
 }

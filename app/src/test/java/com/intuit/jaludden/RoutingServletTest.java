@@ -1,5 +1,6 @@
 package com.intuit.jaludden;
 
+import com.intuit.jaludden.directreport.DatabaseDirectReportRepository;
 import com.intuit.jaludden.directreport.DirectReportsController;
 import com.intuit.jaludden.event.DatabaseEventRepository;
 import com.intuit.jaludden.event.EventController;
@@ -25,7 +26,7 @@ public class RoutingServletTest {
     public void testRouting(String method, String path, String[][] inputBody, int statusCode, String outputBody) {
         HolidayDatabase database = HolidayDatabase.createNull();
         database.start(Path.of("Ignored"));
-        var servlet = new RoutingServlet(new EventController(new DatabaseEventRepository(database)), new DirectReportsController());
+        var servlet = new RoutingServlet(new EventController(new DatabaseEventRepository(database)), new DirectReportsController(new DatabaseDirectReportRepository(database)));
         Map<String, String[]> parameters = Arrays.stream(inputBody).collect(Collectors.toMap(i -> i[0], i -> new String[]{i[1]}));
         var result = servlet.route(method, path, parameters);
         assertEquals(statusCode, result.status);

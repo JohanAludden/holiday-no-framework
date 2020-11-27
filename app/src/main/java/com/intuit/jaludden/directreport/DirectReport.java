@@ -10,6 +10,10 @@ public class DirectReport {
         this.managerName = managerName;
     }
 
+    public String getManagerName() {
+        return managerName;
+    }
+
     public String getName() {
         return name;
     }

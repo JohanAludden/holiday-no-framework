@@ -1,5 +1,6 @@
 package com.intuit.jaludden;
 
+import com.intuit.jaludden.directreport.DatabaseDirectReportRepository;
 import com.intuit.jaludden.directreport.DirectReportsController;
 import com.intuit.jaludden.event.DatabaseEventRepository;
 import com.intuit.jaludden.event.EventController;
@@ -21,7 +22,7 @@ public class HolidayServerTest {
 
     @Test
     public void testStartAndStopServer() throws Exception {
-        var server = new HolidayServer(new RoutingServlet(new EventController(new DatabaseEventRepository(HolidayDatabase.createNull())), new DirectReportsController()));
+        var server = new HolidayServer(createRoutingServlet());
         server.startServer(PORT);
         server.stopServer();
 
@@ -31,7 +32,7 @@ public class HolidayServerTest {
 
     @Test
     public void testKnowsRunningState() throws Exception {
-        var server = new HolidayServer(new RoutingServlet(new EventController(new DatabaseEventRepository(HolidayDatabase.createNull())), new DirectReportsController()));
+        var server = new HolidayServer(createRoutingServlet());
         assertFalse(server.isStarted());
         startAndStopServer(server, ignored -> assertTrue(server.isStarted()));
         assertFalse(server.isStarted());
@@ -40,7 +41,7 @@ public class HolidayServerTest {
     @Test
     public void failsGracefullyOnStartupErrors() throws Exception {
         startAndStopServer(s -> {
-            var server2 = new HolidayServer(new RoutingServlet(new EventController(new DatabaseEventRepository(HolidayDatabase.createNull())), new DirectReportsController()));
+            var server2 = new HolidayServer(createRoutingServlet());
             RuntimeException e = assertThrows(RuntimeException.class, () -> server2.startServer(PORT));
             assertEquals("Can't start server due to error (Address already in use)", e.getMessage());
         });
@@ -56,7 +57,7 @@ public class HolidayServerTest {
 
     @Test
     public void failsFastIfServerIsStoppedBeforeStarted() {
-        var server = new HolidayServer(new RoutingServlet(new EventController(new DatabaseEventRepository(HolidayDatabase.createNull())), new DirectReportsController()));
+        var server = new HolidayServer(createRoutingServlet());
         RuntimeException e = assertThrows(RuntimeException.class, server::stopServer);
         assertEquals("can't stop server because it's not started", e.getMessage());
     }
@@ -90,7 +91,7 @@ public class HolidayServerTest {
 
 
     private void startAndStopServer(ConsumerWithException<HolidayServer> whileStarted) throws Exception {
-        var server = new HolidayServer(new RoutingServlet(new EventController(new DatabaseEventRepository(HolidayDatabase.createNull())), new DirectReportsController()));
+        var server = new HolidayServer(createRoutingServlet());
         startAndStopServer(server, whileStarted);
     }
 
@@ -101,6 +102,10 @@ public class HolidayServerTest {
         } finally {
             server.stopServer();
         }
+    }
+
+    private RoutingServlet createRoutingServlet() {
+        return new RoutingServlet(new EventController(new DatabaseEventRepository(HolidayDatabase.createNull())), new DirectReportsController(new DatabaseDirectReportRepository(HolidayDatabase.createNull())));
     }
 
     private interface ConsumerWithException<T> {

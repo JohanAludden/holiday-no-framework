@@ -1,5 +1,6 @@
 package com.intuit.jaludden;
 
+import com.intuit.jaludden.directreport.DatabaseDirectReportRepository;
 import com.intuit.jaludden.directreport.DirectReportsController;
 import com.intuit.jaludden.event.DatabaseEventRepository;
 import com.intuit.jaludden.event.EventController;
@@ -21,7 +22,7 @@ public class HolidayServer {
     }
 
     public static HolidayServer createNull() {
-        return new HolidayServer((port) -> new NullServer(), new RoutingServlet(new EventController(new DatabaseEventRepository(HolidayDatabase.createNull())), new DirectReportsController()));
+        return new HolidayServer((port) -> new NullServer(), new RoutingServlet(new EventController(new DatabaseEventRepository(HolidayDatabase.createNull())), new DirectReportsController(new DatabaseDirectReportRepository(HolidayDatabase.createNull()))));
     }
 
     private HolidayServer(Function<Integer, ServerWrapper> serverCreator, RoutingServlet routingServlet) {
