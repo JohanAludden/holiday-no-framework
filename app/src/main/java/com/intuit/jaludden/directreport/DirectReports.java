@@ -1,4 +1,4 @@
-package com.intuit.jaludden;
+package com.intuit.jaludden.directreport;
 
 import java.util.LinkedList;
 import java.util.List;

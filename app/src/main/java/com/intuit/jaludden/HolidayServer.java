@@ -1,5 +1,8 @@
 package com.intuit.jaludden;
 
+import com.intuit.jaludden.directreport.DirectReportsController;
+import com.intuit.jaludden.event.DatabaseEventRepository;
+import com.intuit.jaludden.event.EventController;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;

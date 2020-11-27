@@ -236,7 +236,7 @@ public class HolidayDatabase {
         }
     }
 
-    static class NullDatabase implements Database {
+    public static class NullDatabase implements Database {
 
         private final Iterator<Map<String, Object>> results;
         public List<NullDatabaseStatement> statements = new ArrayList<>();
@@ -273,10 +273,10 @@ public class HolidayDatabase {
         }
     }
 
-    static class NullDatabaseStatement implements DatabaseStatement {
+    public static class NullDatabaseStatement implements DatabaseStatement {
         public Map<Integer, Object> parameters = new HashMap<>();
         Iterator<Map<String, Object>> results;
-        String sql;
+        public String sql;
 
         public NullDatabaseStatement(String sql, Iterator<Map<String, Object>> results) {
             this.sql = sql;
@@ -328,7 +328,7 @@ public class HolidayDatabase {
         }
     }
 
-    Database getCurrentDatabase() {
+    public Database getCurrentDatabase() {
         return database;
     }
 }

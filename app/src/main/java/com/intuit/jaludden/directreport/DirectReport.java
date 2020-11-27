@@ -1,4 +1,4 @@
-package com.intuit.jaludden;
+package com.intuit.jaludden.directreport;
 
 public class DirectReport {
 

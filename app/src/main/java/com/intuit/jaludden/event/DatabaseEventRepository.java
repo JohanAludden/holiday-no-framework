@@ -1,4 +1,6 @@
-package com.intuit.jaludden;
+package com.intuit.jaludden.event;
+
+import com.intuit.jaludden.HolidayDatabase;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

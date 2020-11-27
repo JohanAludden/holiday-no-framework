@@ -1,4 +1,4 @@
-package com.intuit.jaludden;
+package com.intuit.jaludden.directreport;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package com.intuit.jaludden;
+package com.intuit.jaludden.event;
 
 import java.time.LocalDate;
 

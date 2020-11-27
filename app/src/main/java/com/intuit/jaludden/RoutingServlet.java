@@ -1,5 +1,9 @@
 package com.intuit.jaludden;
 
+import com.intuit.jaludden.directreport.DirectReportsController;
+import com.intuit.jaludden.event.Event;
+import com.intuit.jaludden.event.EventController;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
