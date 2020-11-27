@@ -1,11 +1,11 @@
 package com.intuit.jaludden;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -14,14 +14,8 @@ public class EventControllerTest {
     private static final LocalDate DECEMBER_TENTH = LocalDate.of(2020, 12, 10);
     private static final LocalDate DECEMBER_ELEVENTH = LocalDate.of(2020, 12, 11);
 
-    private final HolidayDatabase db = HolidayDatabase.createNull();
-    private EventController controller = new EventController(new EventRepository(db));
-
-
-    @BeforeEach
-    public void startUp() {
-        db.start(Path.of("Ignored"));
-    }
+    EventRepository repository = new InMemoryEventRepository();
+    private EventController controller = new EventController(repository);
 
     @Test
     public void testNoEvents() {
@@ -43,8 +37,8 @@ public class EventControllerTest {
         createHolidayEventFor("Varsha", DECEMBER_ELEVENTH);
 
         Events events = getAllEventsFor("Johan");
-        assertEquals(events.getAllEvents().size(), 1);
-        assertEquals(events.getAllEvents().get(0), new Event(DECEMBER_TENTH, Event.Type.HOLIDAY));
+        assertEquals(1, events.getAllEvents().size());
+        assertEquals(new Event(DECEMBER_TENTH, Event.Type.HOLIDAY), events.getAllEvents().get(0));
         assertEquals("Johan", events.getEmployee());
     }
 
@@ -92,5 +86,25 @@ public class EventControllerTest {
 
     private Events getAllByType(String employee, Event.Type type) {
         return controller.getEventsFor(employee, type);
+    }
+
+    private static class InMemoryEventRepository implements EventRepository {
+
+        private Map<String, Events> events = new HashMap<>();
+
+        @Override
+        public Events getAllFor(String employee) {
+            return events.getOrDefault(employee, new Events(employee));
+        }
+
+        @Override
+        public Events getAllForWithType(String employee, Event.Type type) {
+            return getAllFor(employee).filterBy(type);
+        }
+
+        @Override
+        public void addEvent(String employee, Event result) {
+            events.computeIfAbsent(employee, (e) -> new Events(employee)).addEvent(result);
+        }
     }
 }

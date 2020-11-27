@@ -7,7 +7,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -18,7 +22,11 @@ public class HolidayDatabase {
     private Database database;
 
     public static HolidayDatabase createNull() {
-        return new HolidayDatabase((path) -> new NullDatabase());
+        return new HolidayDatabase((path) -> new NullDatabase(Collections.emptyIterator()));
+    }
+
+    public static HolidayDatabase createNull(Iterator<Map<String, Object>> result) {
+        return new HolidayDatabase((path) -> new NullDatabase(result));
     }
 
     public HolidayDatabase() {
@@ -105,6 +113,7 @@ public class HolidayDatabase {
     }
 
     public interface DatabaseResult {
+
         String getString(String columnName);
 
         boolean next();
@@ -227,18 +236,35 @@ public class HolidayDatabase {
         }
     }
 
-    private static class NullDatabase implements Database {
+    static class NullDatabase implements Database {
+
+        private final Iterator<Map<String, Object>> results;
+        public List<NullDatabaseStatement> statements = new ArrayList<>();
+
+        public NullDatabase(Iterator<Map<String, Object>> result) {
+            this.results = result;
+        }
 
         @Override
         public DatabaseConnection getConnection() {
-            return new NullDatabaseConnection();
+            return new NullDatabaseConnection(statements, results);
         }
     }
 
     private static class NullDatabaseConnection implements DatabaseConnection {
+        private final Iterator<Map<String, Object>> results;
+        private final List<NullDatabaseStatement> statements;
+
+        public NullDatabaseConnection(List<NullDatabaseStatement> statements, Iterator<Map<String, Object>> results) {
+            this.statements = statements;
+            this.results = results;
+        }
+
         @Override
         public DatabaseStatement prepareStatement(String sql) {
-            return new NullDatabaseStatement();
+            NullDatabaseStatement result = new NullDatabaseStatement(sql, results);
+            statements.add(result);
+            return result;
         }
 
         @Override
@@ -247,14 +273,24 @@ public class HolidayDatabase {
         }
     }
 
-    private static class NullDatabaseStatement implements DatabaseStatement {
+    static class NullDatabaseStatement implements DatabaseStatement {
+        public Map<Integer, Object> parameters = new HashMap<>();
+        Iterator<Map<String, Object>> results;
+        String sql;
+
+        public NullDatabaseStatement(String sql, Iterator<Map<String, Object>> results) {
+            this.sql = sql;
+            this.results = results;
+        }
+
         @Override
         public DatabaseResult executeQuery() {
-            return new NullDatabaseResult();
+            return new NullDatabaseResult(results);
         }
 
         @Override
         public void setObject(int i, Object o) {
+            parameters.put(i, o);
         }
 
         @Override
@@ -267,17 +303,32 @@ public class HolidayDatabase {
         }
     }
 
-    private static class NullDatabaseResult implements DatabaseResult {
-        private Map<String, String> values = new HashMap<>();
+    static class NullDatabaseResult implements DatabaseResult {
+        private final Iterator<Map<String, Object>> results;
+        private Map<String, Object> values = new HashMap<>();
+
+        public NullDatabaseResult(Iterator<Map<String, Object>> results) {
+            this.results = results;
+        }
+
+        public NullDatabaseResult() {
+            this.results = Collections.emptyIterator();
+        }
 
         @Override
         public String getString(String columnName) {
-            return values.get(columnName);
+            return (String) values.get(columnName);
         }
 
         @Override
         public boolean next() {
-            return true;
+            var result = results.hasNext();
+            values = result ? results.next() : null;
+            return result;
         }
+    }
+
+    Database getCurrentDatabase() {
+        return database;
     }
 }
