@@ -18,17 +18,17 @@ public class HolidayServerTest {
 
     @Test
     public void testStartAndStopServer() throws Exception {
-        var server = new HolidayServer();
-        server.startServer(PORT, HolidayDatabase.createNull());
+        var server = new HolidayServer(new RoutingServlet(new EventController(new DatabaseEventRepository(HolidayDatabase.createNull())), new DirectReportsController()));
+        server.startServer(PORT);
         server.stopServer();
 
-        server.startServer(PORT, HolidayDatabase.createNull());
+        server.startServer(PORT);
         server.stopServer();
     }
 
     @Test
     public void testKnowsRunningState() throws Exception {
-        var server = new HolidayServer();
+        var server = new HolidayServer(new RoutingServlet(new EventController(new DatabaseEventRepository(HolidayDatabase.createNull())), new DirectReportsController()));
         assertFalse(server.isStarted());
         startAndStopServer(server, ignored -> assertTrue(server.isStarted()));
         assertFalse(server.isStarted());
@@ -37,8 +37,8 @@ public class HolidayServerTest {
     @Test
     public void failsGracefullyOnStartupErrors() throws Exception {
         startAndStopServer(s -> {
-            var server2 = new HolidayServer();
-            RuntimeException e = assertThrows(RuntimeException.class, () -> server2.startServer(PORT, HolidayDatabase.createNull()));
+            var server2 = new HolidayServer(new RoutingServlet(new EventController(new DatabaseEventRepository(HolidayDatabase.createNull())), new DirectReportsController()));
+            RuntimeException e = assertThrows(RuntimeException.class, () -> server2.startServer(PORT));
             assertEquals("Can't start server due to error (Address already in use)", e.getMessage());
         });
     }
@@ -46,14 +46,14 @@ public class HolidayServerTest {
     @Test
     public void failsFastIfServerIsStartedTwice() throws Exception {
         startAndStopServer(s -> {
-            RuntimeException e = assertThrows(RuntimeException.class, () -> s.startServer(PORT, HolidayDatabase.createNull()));
+            RuntimeException e = assertThrows(RuntimeException.class, () -> s.startServer(PORT));
             assertEquals("can't start server because it's already running", e.getMessage());
         });
     }
 
     @Test
     public void failsFastIfServerIsStoppedBeforeStarted() {
-        var server = new HolidayServer();
+        var server = new HolidayServer(new RoutingServlet(new EventController(new DatabaseEventRepository(HolidayDatabase.createNull())), new DirectReportsController()));
         RuntimeException e = assertThrows(RuntimeException.class, server::stopServer);
         assertEquals("can't stop server because it's not started", e.getMessage());
     }
@@ -62,8 +62,8 @@ public class HolidayServerTest {
     public void testNullability() throws Exception {
         var server = HolidayServer.createNull();
         var server2 = HolidayServer.createNull();
-        server.startServer(8080, HolidayDatabase.createNull());
-        server2.startServer(8080, HolidayDatabase.createNull());
+        server.startServer(8080);
+        server2.startServer(8080);
     }
 
     @Test
@@ -87,11 +87,12 @@ public class HolidayServerTest {
 
 
     private void startAndStopServer(ConsumerWithException<HolidayServer> whileStarted) throws Exception {
-        startAndStopServer(new HolidayServer(), whileStarted);
+        var server = new HolidayServer(new RoutingServlet(new EventController(new DatabaseEventRepository(HolidayDatabase.createNull())), new DirectReportsController()));
+        startAndStopServer(server, whileStarted);
     }
 
     private void startAndStopServer(HolidayServer server, ConsumerWithException<HolidayServer> whileStarted) throws Exception {
-        server.startServer(PORT, HolidayDatabase.createNull());
+        server.startServer(PORT);
         try {
             whileStarted.accept(server);
         } finally {

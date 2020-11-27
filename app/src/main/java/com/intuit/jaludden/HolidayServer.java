@@ -10,21 +10,23 @@ import java.util.function.Function;
 public class HolidayServer {
 
     private final Function<Integer, ServerWrapper> serverCreator;
+    private final RoutingServlet routingServlet;
     private ServerWrapper server;
 
-    public HolidayServer() {
-        this((port) -> new JettyWrapper(new Server(port)));
+    public HolidayServer(RoutingServlet routingServlet) {
+        this((port) -> new JettyWrapper(new Server(port)), routingServlet);
     }
 
     public static HolidayServer createNull() {
-        return new HolidayServer((port) -> new NullServer());
+        return new HolidayServer((port) -> new NullServer(), new RoutingServlet(new EventController(new DatabaseEventRepository(HolidayDatabase.createNull())), new DirectReportsController()));
     }
 
-    private HolidayServer(Function<Integer, ServerWrapper> serverCreator) {
+    private HolidayServer(Function<Integer, ServerWrapper> serverCreator, RoutingServlet routingServlet) {
         this.serverCreator = serverCreator;
+        this.routingServlet = routingServlet;
     }
 
-    public void startServer(int port, HolidayDatabase database) {
+    public void startServer(int port) {
         if (isStarted()) {
             throw new RuntimeException("can't start server because it's already running");
         }
@@ -32,7 +34,7 @@ public class HolidayServer {
             server = serverCreator.apply(port);
 
             var handler = new ServletHandler();
-            handler.addServletWithMapping(new ServletHolder(new RoutingServlet(database)), "/*");
+            handler.addServletWithMapping(new ServletHolder(routingServlet), "/*");
             server.setHandler(handler);
 
             server.start();

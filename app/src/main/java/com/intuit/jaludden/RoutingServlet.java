@@ -11,9 +11,9 @@ public class RoutingServlet extends HttpServlet {
     EventController eventsController;
     DirectReportsController directReportsController;
 
-    public RoutingServlet(HolidayDatabase database) {
-        eventsController = new EventController(new DatabaseEventRepository(database));
-        directReportsController = new DirectReportsController();
+    public RoutingServlet(EventController eventsController, DirectReportsController directReportsController) {
+        this.eventsController = eventsController;
+        this.directReportsController = directReportsController;
     }
 
     public static class RoutingResult {
