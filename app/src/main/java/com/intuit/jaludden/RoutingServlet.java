@@ -8,8 +8,13 @@ import java.time.LocalDate;
 import java.util.Map;
 
 public class RoutingServlet extends HttpServlet {
-    EventController eventsController = new EventController(new EventRepository());
-    DirectReportsController directReportsController = new DirectReportsController();
+    EventController eventsController;
+    DirectReportsController directReportsController;
+
+    public RoutingServlet(HolidayDatabase database) {
+        eventsController = new EventController(new EventRepository(database));
+        directReportsController = new DirectReportsController();
+    }
 
     public static class RoutingResult {
         public int status;

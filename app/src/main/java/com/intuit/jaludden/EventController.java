@@ -15,7 +15,7 @@ public class EventController {
     }
 
     public Events getEventsFor(String employee, Event.Type type) {
-        return repository.getAllForWithType(employee, type, this);
+        return repository.getAllForWithType(employee, type);
     }
 
     public Event createEventFor(String employee, LocalDate date, Event.Type type) {

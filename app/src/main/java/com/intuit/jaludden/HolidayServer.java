@@ -2,6 +2,7 @@ package com.intuit.jaludden;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 
 import java.net.BindException;
 import java.util.function.Function;
@@ -9,7 +10,7 @@ import java.util.function.Function;
 public class HolidayServer {
 
     private final Function<Integer, ServerWrapper> serverCreator;
-    private ServerWrapper jettyServer;
+    private ServerWrapper server;
 
     public HolidayServer() {
         this((port) -> new JettyWrapper(new Server(port)));
@@ -23,18 +24,18 @@ public class HolidayServer {
         this.serverCreator = serverCreator;
     }
 
-    public void startServer(int port) {
+    public void startServer(int port, HolidayDatabase database) {
         if (isStarted()) {
             throw new RuntimeException("can't start server because it's already running");
         }
         try {
-            jettyServer = serverCreator.apply(port);
+            server = serverCreator.apply(port);
 
             var handler = new ServletHandler();
-            handler.addServletWithMapping(RoutingServlet.class, "/*");
-            jettyServer.setHandler(handler);
+            handler.addServletWithMapping(new ServletHolder(new RoutingServlet(database)), "/*");
+            server.setHandler(handler);
 
-            jettyServer.start();
+            server.start();
         } catch (BindException e) {
             throw new RuntimeException("Can't start server due to error (" + e.getMessage() + ")", e);
         } catch (Exception e) {
@@ -43,20 +44,22 @@ public class HolidayServer {
     }
 
     public void stopServer() throws Exception {
-        if(jettyServer == null) {
+        if (server == null) {
             throw new RuntimeException("can't stop server because it's not started");
         }
-        jettyServer.stop();
-        jettyServer = null;
+        server.stop();
+        server = null;
     }
 
     public boolean isStarted() {
-        return jettyServer != null;
+        return server != null;
     }
 
     private interface ServerWrapper {
         void start() throws Exception;
+
         void stop() throws Exception;
+
         void setHandler(ServletHandler handler);
     }
 
@@ -74,7 +77,7 @@ public class HolidayServer {
 
         @Override
         public void start() throws Exception {
-                s.start();
+            s.start();
         }
 
         @Override
@@ -84,8 +87,16 @@ public class HolidayServer {
     }
 
     private static class NullServer implements ServerWrapper {
-        @Override public void start() {}
-        @Override public void stop() {}
-        @Override public void setHandler(ServletHandler handler) {}
+        @Override
+        public void start() {
+        }
+
+        @Override
+        public void stop() {
+        }
+
+        @Override
+        public void setHandler(ServletHandler handler) {
+        }
     }
 }

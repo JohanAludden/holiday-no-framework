@@ -6,6 +6,8 @@ package com.intuit.jaludden;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Path;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AppTest {
@@ -14,10 +16,12 @@ class AppTest {
     public void startServer() throws Exception {
     }
 
-    @Test void shouldStartServer() throws Exception {
+    @Test
+    void shouldStartServer() throws Exception {
         var server = HolidayServer.createNull();
-        var app = new App(server);
-        app.start();
+        var database = HolidayDatabase.createNull();
+        var app = new App(server, database);
+        app.start(Path.of("Ignored"));
         assertTrue(server.isStarted());
     }
 }

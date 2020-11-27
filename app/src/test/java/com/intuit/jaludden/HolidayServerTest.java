@@ -19,10 +19,10 @@ public class HolidayServerTest {
     @Test
     public void testStartAndStopServer() throws Exception {
         var server = new HolidayServer();
-        server.startServer(PORT);
+        server.startServer(PORT, HolidayDatabase.createNull());
         server.stopServer();
 
-        server.startServer(PORT);
+        server.startServer(PORT, HolidayDatabase.createNull());
         server.stopServer();
     }
 
@@ -38,7 +38,7 @@ public class HolidayServerTest {
     public void failsGracefullyOnStartupErrors() throws Exception {
         startAndStopServer(s -> {
             var server2 = new HolidayServer();
-            RuntimeException e = assertThrows(RuntimeException.class, () -> server2.startServer(PORT));
+            RuntimeException e = assertThrows(RuntimeException.class, () -> server2.startServer(PORT, HolidayDatabase.createNull()));
             assertEquals("Can't start server due to error (Address already in use)", e.getMessage());
         });
     }
@@ -46,7 +46,7 @@ public class HolidayServerTest {
     @Test
     public void failsFastIfServerIsStartedTwice() throws Exception {
         startAndStopServer(s -> {
-            RuntimeException e = assertThrows(RuntimeException.class, () -> s.startServer(PORT));
+            RuntimeException e = assertThrows(RuntimeException.class, () -> s.startServer(PORT, HolidayDatabase.createNull()));
             assertEquals("can't start server because it's already running", e.getMessage());
         });
     }
@@ -62,8 +62,8 @@ public class HolidayServerTest {
     public void testNullability() throws Exception {
         var server = HolidayServer.createNull();
         var server2 = HolidayServer.createNull();
-        server.startServer(8080);
-        server2.startServer(8080);
+        server.startServer(8080, HolidayDatabase.createNull());
+        server2.startServer(8080, HolidayDatabase.createNull());
     }
 
     @Test
@@ -91,7 +91,7 @@ public class HolidayServerTest {
     }
 
     private void startAndStopServer(HolidayServer server, ConsumerWithException<HolidayServer> whileStarted) throws Exception {
-        server.startServer(PORT);
+        server.startServer(PORT, HolidayDatabase.createNull());
         try {
             whileStarted.accept(server);
         } finally {

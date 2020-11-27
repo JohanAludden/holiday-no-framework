@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,7 +20,9 @@ public class RoutingServletTest {
     @MethodSource("routingData")
     @ParameterizedTest(name = "{0} {1} ({2}) -> {3}, ({4})")
     public void testRouting(String method, String path, String[][] inputBody, int statusCode, String outputBody) {
-        var servlet = new RoutingServlet();
+        HolidayDatabase database = HolidayDatabase.createNull();
+        database.start(Path.of("Ignored"));
+        var servlet = new RoutingServlet(database);
         Map<String, String[]> parameters = Arrays.stream(inputBody).collect(Collectors.toMap(i -> i[0], i -> new String[]{i[1]}));
         var result = servlet.route(method, path, parameters);
         assertEquals(statusCode, result.status);

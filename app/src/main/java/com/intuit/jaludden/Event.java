@@ -35,6 +35,14 @@ public class Event {
         return this.type == type;
     }
 
+    public LocalDate date() {
+        return date;
+    }
+
+    public Type type() {
+        return type;
+    }
+
     public enum Type {
         HOLIDAY, SICK_DAY
     }

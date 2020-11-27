@@ -1,7 +1,9 @@
 package com.intuit.jaludden;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -12,7 +14,14 @@ public class EventControllerTest {
     private static final LocalDate DECEMBER_TENTH = LocalDate.of(2020, 12, 10);
     private static final LocalDate DECEMBER_ELEVENTH = LocalDate.of(2020, 12, 11);
 
-    private EventController controller = new EventController(new EventRepository());
+    private final HolidayDatabase db = HolidayDatabase.createNull();
+    private EventController controller = new EventController(new EventRepository(db));
+
+
+    @BeforeEach
+    public void startUp() {
+        db.start(Path.of("Ignored"));
+    }
 
     @Test
     public void testNoEvents() {
