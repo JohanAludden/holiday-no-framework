@@ -49,6 +49,15 @@ public class DatabaseEventRepositoryTest {
         assertEquals(Event.Type.HOLIDAY.name(), currentDb.statements.get(0).parameters.get(3));
     }
 
+    @Test
+    public void testCreatesTable() {
+        var repository = initiateRepository(Collections.emptyIterator());
+        repository.createTables();
+        var currentDb = getNullDatabase();
+        assertEquals("create table if not exists events (name text not null, date text not null, type text not null)", currentDb.statements.get(0).sql);
+
+    }
+
     private HolidayDatabase.NullDatabase getNullDatabase() {
         return (HolidayDatabase.NullDatabase) db.getCurrentDatabase();
     }

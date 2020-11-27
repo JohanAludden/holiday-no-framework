@@ -8,12 +8,14 @@ import com.intuit.jaludden.event.EventController;
 import java.nio.file.Path;
 
 public class App {
+    private DatabaseEventRepository eventRepository;
     private HolidayServer server;
     private HolidayDatabase database;
 
-    public App(HolidayServer server, HolidayDatabase database) {
+    public App(HolidayServer server, HolidayDatabase database, DatabaseEventRepository eventRepository) {
         this.server = server;
         this.database = database;
+        this.eventRepository = eventRepository;
     }
 
     public static void main(String[] args) {
@@ -25,11 +27,12 @@ public class App {
         var routingServlet = new RoutingServlet(eventsController, directReportsController);
         var server = new HolidayServer(routingServlet);
 
-        new App(server, database).start(Path.of(args[0]));
+        new App(server, database, eventRepository).start(Path.of(args[0]));
     }
 
     void start(Path path) {
         database.start(path);
+        eventRepository.createTables();
         server.startServer(8080);
     }
 

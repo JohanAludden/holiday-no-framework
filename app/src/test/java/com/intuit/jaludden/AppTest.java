@@ -3,6 +3,7 @@
  */
 package com.intuit.jaludden;
 
+import com.intuit.jaludden.event.DatabaseEventRepository;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
@@ -15,7 +16,7 @@ class AppTest {
     void shouldStartServer() throws Exception {
         var server = HolidayServer.createNull();
         var database = HolidayDatabase.createNull();
-        var app = new App(server, database);
+        var app = new App(server, database, new DatabaseEventRepository(database));
         app.start(Path.of("Ignored"));
         assertTrue(server.isStarted());
     }

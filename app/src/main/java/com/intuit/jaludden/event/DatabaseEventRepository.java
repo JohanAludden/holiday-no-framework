@@ -20,7 +20,7 @@ public class DatabaseEventRepository implements EventRepository {
             while (rs.next()) {
                 result.addEvent(new Event(LocalDate.parse(rs.getString("date")), Event.Type.valueOf(rs.getString("type"))));
             }
-        });
+        }, employee);
         return result;
     }
 
@@ -36,5 +36,9 @@ public class DatabaseEventRepository implements EventRepository {
                 employee,
                 result.date().format(DateTimeFormatter.ISO_DATE),
                 result.type().name());
+    }
+
+    public void createTables() {
+        database.createTable("create table if not exists events (name text not null, date text not null, type text not null)");
     }
 }

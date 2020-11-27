@@ -5,6 +5,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -101,12 +102,37 @@ public class HolidayDatabaseTest {
     }
 
     @Test
+    public void canQueryWithParameters() throws Exception {
+        startAndStopServer(database -> {
+            var result = new AtomicInteger();
+            database.createTable("CREATE TABLE IF NOT EXISTS employee (name text)");
+            database.executeInsert("INSERT into employee (name) values (?)", "Johan");
+            database.executeInsert("INSERT into employee (name) values (?)", "Varsha");
+            database.executeQuery("select name from employee where name = ?", rs -> {
+                if (rs.next()) {
+                    result.incrementAndGet();
+                }
+            }, "Johan");
+            assertEquals(1, result.get());
+        });
+    }
+
+    @Test
     public void failsFastIfExecuteInsertIsCalledWhenStopped() {
         var database = new HolidayDatabase();
         var e = assertThrows(
                 RuntimeException.class,
                 () -> database.executeInsert("statement doesnt matter"));
         assertEquals("can't insert into a stopped database", e.getMessage());
+    }
+
+    @Test
+    public void failsFastIfCreateTablesIsCalledWhenStopped() {
+        var database = new HolidayDatabase();
+        var e = assertThrows(
+                RuntimeException.class,
+                () -> database.createTable("statement doesnt matter"));
+        assertEquals("can't create table on a stopped database", e.getMessage());
     }
 
     private void startAndStopServer(ConsumerWithException<HolidayDatabase> whileStarted) throws Exception {

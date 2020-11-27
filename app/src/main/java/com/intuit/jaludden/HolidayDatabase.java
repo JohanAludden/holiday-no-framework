@@ -60,12 +60,15 @@ public class HolidayDatabase {
         database = null;
     }
 
-    public void executeQuery(String selectStatement, Consumer<DatabaseResult> resultHandler) {
+    public void executeQuery(String selectStatement, Consumer<DatabaseResult> resultHandler, Object... params) {
         if (!isStarted()) {
             throw new RuntimeException("can't query a stopped database");
         }
         try (DatabaseConnection con = database.getConnection()) {
             var stmt = con.prepareStatement(selectStatement);
+            for (int i = 0; i < params.length; i++) {
+                stmt.setObject(i + 1, params[i]);
+            }
             resultHandler.accept(stmt.executeQuery());
         }
     }
@@ -85,6 +88,9 @@ public class HolidayDatabase {
     }
 
     public void createTable(String statement) {
+        if (!isStarted()) {
+            throw new RuntimeException("can't create table on a stopped database");
+        }
         try (DatabaseConnection con = database.getConnection()) {
             var stmt = con.prepareStatement(statement);
             stmt.executeCreateTable();
