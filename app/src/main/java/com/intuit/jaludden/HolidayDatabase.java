@@ -86,7 +86,7 @@ public class HolidayDatabase {
 
     public void createTable(String statement) {
         try (DatabaseConnection con = database.getConnection()) {
-            DatabaseStatement stmt = con.prepareStatement(statement);
+            var stmt = con.prepareStatement(statement);
             stmt.executeCreateTable();
         }
     }

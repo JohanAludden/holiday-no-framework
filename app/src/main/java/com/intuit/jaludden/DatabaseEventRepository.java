@@ -13,7 +13,7 @@ public class DatabaseEventRepository implements EventRepository {
 
     @Override
     public Events getAllFor(String employee) {
-        Events result = new Events(employee);
+        var result = new Events(employee);
         database.executeQuery("select name, date, type from events where name = ?", rs -> {
             while (rs.next()) {
                 result.addEvent(new Event(LocalDate.parse(rs.getString("date")), Event.Type.valueOf(rs.getString("type"))));

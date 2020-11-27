@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,7 +18,7 @@ public class EventControllerTest {
 
     @Test
     public void testNoEvents() {
-        List<Event> events = getAllEventsFor("Johan").getAllEvents();
+        var events = getAllEventsFor("Johan").getAllEvents();
         assertEquals(0, events.size());
     }
 
@@ -27,7 +26,7 @@ public class EventControllerTest {
     public void testAllAddedEventsAreReturned() {
         createHolidayEventFor("Johan", DECEMBER_TENTH);
         createHolidayEventFor("Johan", LocalDate.of(2020, 12, 11));
-        List<Event> events = getAllEventsFor("Johan").getAllEvents();
+        var events = getAllEventsFor("Johan").getAllEvents();
         assertEquals(2, events.size());
     }
 
@@ -36,7 +35,7 @@ public class EventControllerTest {
         createHolidayEventFor("Johan", DECEMBER_TENTH);
         createHolidayEventFor("Varsha", DECEMBER_ELEVENTH);
 
-        Events events = getAllEventsFor("Johan");
+        var events = getAllEventsFor("Johan");
         assertEquals(1, events.getAllEvents().size());
         assertEquals(new Event(DECEMBER_TENTH, Event.Type.HOLIDAY), events.getAllEvents().get(0));
         assertEquals("Johan", events.getEmployee());
@@ -44,7 +43,7 @@ public class EventControllerTest {
 
     @Test
     public void testCreatesHolidayEvent() {
-        Event result = createEventFor("Johan", DECEMBER_TENTH, Event.Type.HOLIDAY);
+        var result = createEventFor("Johan", DECEMBER_TENTH, Event.Type.HOLIDAY);
         assertEquals(result, new Event(DECEMBER_TENTH, Event.Type.HOLIDAY));
     }
 
@@ -52,14 +51,14 @@ public class EventControllerTest {
     void testReturnsOnlyHolidays() {
         createEventFor("Johan", DECEMBER_TENTH, Event.Type.HOLIDAY);
         createEventFor("Johan", DECEMBER_ELEVENTH, Event.Type.SICK_DAY);
-        Events events = getAllByType("Johan", Event.Type.HOLIDAY);
+        var events = getAllByType("Johan", Event.Type.HOLIDAY);
         assertEquals(1, events.getAllEvents().size());
         assertEquals(new Event(DECEMBER_TENTH, Event.Type.HOLIDAY), events.getAllEvents().get(0));
     }
 
     @Test
     public void testCreatesSickDayEvent() {
-        Event result = createEventFor("Johan", DECEMBER_TENTH, Event.Type.SICK_DAY);
+        var result = createEventFor("Johan", DECEMBER_TENTH, Event.Type.SICK_DAY);
         assertEquals(result, new Event(DECEMBER_TENTH, Event.Type.SICK_DAY));
     }
 
@@ -67,7 +66,7 @@ public class EventControllerTest {
     void testReturnsOnlySickDays() {
         createEventFor("Johan", DECEMBER_TENTH, Event.Type.HOLIDAY);
         createEventFor("Johan", DECEMBER_ELEVENTH, Event.Type.SICK_DAY);
-        Events events = getAllByType("Johan", Event.Type.SICK_DAY);
+        var events = getAllByType("Johan", Event.Type.SICK_DAY);
         assertEquals(1, events.getAllEvents().size());
         assertEquals(new Event(DECEMBER_ELEVENTH, Event.Type.SICK_DAY), events.getAllEvents().get(0));
     }
